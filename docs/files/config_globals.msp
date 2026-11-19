@@ -1,0 +1,14 @@
+############ some global properties ############
+# Default values of the global simulation slots, created by the 'global' operator (run in init_prolog).
+# A deck overrides them key by key, e.g. global: { dt: 1.0e-5 , simulation_end_iteration: 49999 }.
+# Values are given without units and are taken as SI (m, kg, s).
+
+global:
+  dt: 1.0e-5                     # time step (mpmxdem: dt)
+  timestep: 0                    # current time step
+  physical_time: 0.0             # current time (mpmxdem: t)
+  simulation_end_iteration: 0    # last time step: the loop runs timesteps 0 .. simulation_end_iteration
+  compute_loop_continue: true
+  mpm_vtk_period: 1000           # paraview output period (mpmxdem: vtkPeriod)
+  mpm_prox_period: 100           # proximity check period (mpmxdem: proxPeriod)
+  mpm_log_period: 1000           # obstacle log period

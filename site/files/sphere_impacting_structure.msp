@@ -1,0 +1,36 @@
+# mpmxdem mpm/3D/Examples/sphereImpactingStructure.sim: a rigid sphere hits a Mohr-Coulomb block on a plane.
+# SI units. Add '--nogpu false' to run on the GPU.
+
+configuration:
+  nogpu: true
+
+global:
+  dt: 1.0e-5
+  simulation_end_iteration: 49999   # 0.5 s
+
+input_data:
+  - parameters:
+      gravity: [ 0.0 , -9.81 , 0.0 ]
+  # MPM grid of 100 x 40 x 55 elements of 0.06 m: one exaNBody cell per node, domain shifted by -h/2
+  - domain:
+      cell_size: 0.06
+      grid_dims: [ 101 , 41 , 56 ]
+      bounds: [ [ -0.03 , -0.03 , -0.03 ] , [ 6.03 , 2.43 , 3.33 ] ]
+      periodic: [ false , false , false ]
+      expandable: false
+  - grid_flavor_mpm
+  - init_rcb_grid
+  - set_mp_grid: { group: 0, density: 2000., lower: [ 3.5 , 0.5 , 0.3 ], upper: [ 3.9 , 1.0 , 2.7 ], size: 0.02 }
+  - obstacles:
+      obstacles:
+        - "Sphere 0 3.1 1.0 1.4 0.1 free 30000.0 2.0 0.1 0 0"
+        - "Plane 1 0.0 0.5 0.0 8.0 0.5 0.0 8.0 0.5 4.0 0.0 0.5 4.0"
+  - contact_laws:
+      set: [ "mu 0 0 0.3", "kn 0 0 1.0e6", "en2 0 0 0.8", "kt 0 0 0.5e6",
+             "mu 0 1 1.0", "kn 0 1 1.0e6", "en2 0 1 0.8", "kt 0 1 0.5e6" ]
+
+init_epilog: mpm_init
+compute_loop: mpm_compute_loop
+
+mpm_constitutive_model:
+  - mohr_coulomb: { group: 0, young: 8.0e6, poisson: 0.42, friction_angle: 0.7, cohesion: 1e4, dilatancy_angle: 0.05 }

@@ -1,0 +1,40 @@
+# mpmxdem mpm/3D/Examples/piles_one.sim: a fixed pile (Cylinder) through a Mohr-Coulomb slope in a box. SI units.
+# Needs the Blender files of the original example in the run directory (not in mpmxdem; small synthetic ones in
+# example/blender are used by the tests):
+# slope.stl (slope) and coordPlanes0..4.txt (box).
+
+configuration:
+  nogpu: true
+
+global:
+  dt: 1.0e-5
+  simulation_end_iteration: 299999   # mpmxdem: nstep 300000
+  mpm_vtk_period: 2000
+
+input_data:
+  - parameters:
+      gravity: [ 0.0 , -9.81 , 0.0 ]
+  # mpmxdem new_set_grid 10 5 10 0.25: 40 x 20 x 40 elements of 0.25 m
+  - domain:
+      cell_size: 0.25
+      grid_dims: [ 41 , 21 , 41 ]
+      bounds: [ [ -0.125 , -0.125 , -0.125 ] , [ 10.125 , 5.125 , 10.125 ] ]
+      periodic: [ false , false , false ]
+      expandable: false
+  - grid_flavor_mpm
+  - init_rcb_grid
+  - blender_set_mp_grid: { group: 0, density: 2000., file: slope.stl, format: stl, size: 0.125 }
+  - obstacles:
+      obstacles: [ "Plane2 0 coordPlanes0.txt", "Plane2 0 coordPlanes1.txt", "Plane2 0 coordPlanes2.txt",
+                   "Plane2 0 coordPlanes3.txt", "Plane2 0 coordPlanes4.txt",
+                   "Cylinder 1 5.5 0 3.0 0.4 4 0 1 0" ]
+  - obstacles_delete_inside
+  - contact_laws:
+      set: [ "mu 0 0 0.0", "kn 0 0 1.0e6", "en2 0 0 1.0", "kt 0 0 0.5e6",
+             "mu 0 1 0.3", "kn 0 1 1.0e6", "en2 0 1 1.0", "kt 0 1 0.5e6" ]
+
+init_epilog: mpm_init
+compute_loop: mpm_compute_loop
+
+mpm_constitutive_model:
+  - mohr_coulomb: { group: 0, young: 70.0e6, poisson: 0.42, friction_angle: 0.5, cohesion: 5.0e2, dilatancy_angle: 0.05 }

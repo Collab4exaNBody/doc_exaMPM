@@ -1,0 +1,8 @@
+# Empty exaMPM run: loads main-config.msp and executes the default
+# simulation block, which only prints the banner and initializes /
+# finalizes the hardware (MPI, GPU). No particles, no grid, no time loop.
+#
+# Usage: ./exaMPM example/empty.msp
+
+compute_loop:
+  - message: "exaMPM: empty run, nothing to compute"

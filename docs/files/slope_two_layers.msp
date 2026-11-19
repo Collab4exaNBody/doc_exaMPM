@@ -1,0 +1,44 @@
+# mpmxdem mpm/3D/Examples/slopeTwoLayers.sim: an elastic slope with a weaker Mohr-Coulomb layer, in a box. SI units.
+# Needs the Blender files of the original example in the run directory (not in mpmxdem; small synthetic ones in
+# example/blender are used by the tests):
+# coordMP.txt (slope), modifyMP.txt (layer) and coordPlanes0..4.txt (box).
+# mpmxdem changes the model of the layer MPs but keeps their group (0); in exaMPM the model is chosen by group, so the
+# layer is group 1, with the same contact laws as group 0.
+
+configuration:
+  nogpu: true
+
+global:
+  dt: 1.0e-5
+  simulation_end_iteration: 299999   # mpmxdem: nstep 300000
+  mpm_vtk_period: 2000
+
+input_data:
+  - parameters:
+      gravity: [ 0.0 , -9.81 , 0.0 ]
+  # mpmxdem new_set_grid 13 7 6 0.25: 52 x 28 x 24 elements of 0.25 m
+  - domain:
+      cell_size: 0.25
+      grid_dims: [ 53 , 29 , 25 ]
+      bounds: [ [ -0.125 , -0.125 , -0.125 ] , [ 13.125 , 7.125 , 6.125 ] ]
+      periodic: [ false , false , false ]
+      expandable: false
+  - grid_flavor_mpm
+  - init_rcb_grid
+  - blender_set_mp_grid: { group: 0, density: 2000., file: coordMP.txt, size: 0.125 }
+  - blender_modify_mp: { group: 1, density: 2000., file: modifyMP.txt }
+  - obstacles:
+      obstacles: [ "Plane2 0 coordPlanes0.txt", "Plane2 1 coordPlanes1.txt", "Plane2 1 coordPlanes2.txt",
+                   "Plane2 1 coordPlanes3.txt", "Plane2 1 coordPlanes4.txt" ]
+  - contact_laws:
+      set: [ "mu 0 0 0.3", "kn 0 0 1.0e6", "en2 0 0 0.8", "kt 0 0 0.5e6",
+             "mu 0 1 0.0", "kn 0 1 1.0e6", "en2 0 1 0.8", "kt 0 1 0.5e6",
+             "mu 1 0 0.3", "kn 1 0 1.0e6", "en2 1 0 0.8", "kt 1 0 0.5e6",
+             "mu 1 1 0.0", "kn 1 1 1.0e6", "en2 1 1 0.8", "kt 1 1 0.5e6" ]
+
+init_epilog: mpm_init
+compute_loop: mpm_compute_loop
+
+mpm_constitutive_model:
+  - hooke_elasticity: { group: 0, young: 200.0e8, poisson: 0.42 }
+  - mohr_coulomb: { group: 1, young: 70.0e6, poisson: 0.42, friction_angle: 0.5, cohesion: 5.0e1, dilatancy_angle: 0.05 }

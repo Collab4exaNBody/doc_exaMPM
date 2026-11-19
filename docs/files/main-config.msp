@@ -1,0 +1,181 @@
+# ==========================================
+# === exaMPM default configuration       ===
+# ==========================================
+
+configuration:
+  # default plugins to load
+  plugins: []
+  logging:
+    parallel: false
+    debug: false
+    profiling: false
+  profiling:
+    exectime: false
+    summary: false
+  debug:
+    plugins: false
+    config: false
+    graph: false
+    graph_lod: 0
+    filter: []
+  mpimt: true
+  pinethreads: false
+  num_threads: {}
+  omp_max_nesting: 2
+
+includes:
+  - config_globals.msp
+
+print_logo_banner:
+  profiling: false
+  body:
+    - message: |
+
+        ___________ ____  ___    _____      _____    __________     _____
+        \_   _____/ \   \/  /   /  _  \    /     \   \______   \   /     \
+         |    __)_   \     /   /  /_\  \  /  \ /  \   |     ___/  /  \ /  \
+         |        \  /     \  /    |    \ /    Y    \  |    |     /    Y    \
+        /_______  / /___/\  \ \____|__  / \____|__  /  |____|     \____|__  /
+                \/        \_/         \/          \/                      \/
+
+
+# ==========================================
+# === placeholders (do nothing for now)  ===
+# ==========================================
+hw_device_init:
+  - mpi_comm_world
+  - init_cuda
+
+hw_device_finalize:
+  - finalize_cuda
+
+init_prolog: global   # default global values: config_globals.msp
+input_data: nop
+init_epilog: nop
+first_iteration: nop
+compute_loop: nop
+simulation_epilog: nop
+
+# ==========================================
+# === MPM building blocks                ===
+# ==========================================
+# Used by MPM decks, e.g. example/sphere_impacting_structure.msp:
+#   init_epilog: mpm_init
+#   compute_loop: mpm_compute_loop
+#   mpm_constitutive_model: [ mohr_coulomb: {...} ]
+# Values are given without units and are taken as SI (m, kg, s). Global defaults: config_globals.msp.
+
+mpm_init:
+  - init_nodes
+  - update_mp_cells
+
+# --- mpmxdem ModifiedLagrangian::advanceOneStep, split into operators ---
+mpm_constitutive_model: nop
+
+mpm_modified_lagrangian:
+  - update_mp_cells           #    cells holding MPs
+  - obstacles_reset       # A) reset obstacle force / moment, acc = gravity
+  - zero_particle_force       #    reset MP contact forces
+  - reset_nodes           #    discard previous grid
+  - obstacles_predict     # B) move the obstacles
+  - update_mass           # 0) MP mass
+  - p2g_mass              # 1) nodal mass
+  - p2g_internal_forces   # 2) internal and gravity nodal forces
+  - contact_forces        # 2b) MP-obstacle contacts (boundaryConditions)
+  - obstacles_correct     # C) obstacle velocity from contact forces
+  - p2g_contact_forces    #    contact forces to the nodes
+  - grid_momentum_rate    # 3) qdot = fb + f, q += qdot dt
+  - g2p_velocity          # 3a) MP velocity
+  - p2g_momentum          # 3b) updated nodal momentum
+  - mpm_constitutive_model    # 4) strain and stress
+  - update_volume         # 4a) volume and density
+  - g2p_position          # 5) MP positions
+
+# --- mpmxdem MPMbox::run: outputs and proximity check before each step ---
+mpm_trigger_vtk:
+  rebind: { freq: mpm_vtk_period , result: mpm_trigger_vtk }
+  body:
+    - nth_timestep: { first: true }
+
+mpm_trigger_prox:
+  rebind: { freq: mpm_prox_period , result: mpm_trigger_prox }
+  body:
+    - nth_timestep: { first: true }
+
+mpm_trigger_log:
+  rebind: { freq: mpm_log_period , result: mpm_trigger_log }
+  body:
+    - nth_timestep: { first: true }
+
+mpm_write_paraview:
+  - timestep_file: "mpm_paraview/mpm_%09d"
+  - write_paraview:
+      binary_mode: true
+      write_ghost: false
+      write_box: true
+      fields: [ "id", "type", "vx", "vy", "vz", "mp_mass", "mp_vol", "mp_stress", "mp_strain" ]
+  - paraview_obstacles: { obstacles_vtk_format: "mpm_paraview/obstacles_%09d.vtk" }
+
+# optional text output of the MP positions (mpmxdem mpPos<n>.txt), e.g. mpm_vtk_output: [ mpm_write_paraview, save_mp_pos ]
+mpm_vtk_output: mpm_write_paraview
+
+mpm_vtk_if:
+  condition: mpm_trigger_vtk
+  body: [ mpm_vtk_output ]
+
+mpm_prox_if:
+  condition: mpm_trigger_prox
+  body: [ check_proximity ]
+
+# exaDEM-like log line (simulation_state + print_simulation_state), every mpm_log_period steps.
+# Extra outputs at the same period, e.g. mpm_log_extra: print_obstacles
+mpm_log_extra: nop
+
+mpm_print_log:
+  - simulation_state
+  - print_simulation_state: { log_file: "ExaMPMOutputDir/log.txt" }
+  - mpm_log_extra
+
+mpm_log_if:
+  condition: mpm_trigger_log
+  body: [ mpm_print_log ]
+
+mpm_begin_iteration:
+  - mpm_trigger_vtk
+  - mpm_trigger_prox
+  - mpm_trigger_log
+  - mpm_vtk_if
+  - mpm_log_if
+  - mpm_prox_if
+
+mpm_compute_loop_stop:
+  profiling: false
+  rebind: { end_at: simulation_end_iteration , result: compute_loop_continue }
+  body:
+    - sim_continue
+
+mpm_compute_loop:
+  loop: true
+  name: loop
+  condition: compute_loop_continue
+  body:
+    - mpm_begin_iteration
+    - mpm_modified_lagrangian
+    - next_time_step
+    - mpm_compute_loop_stop
+
+# ==========================================
+# === simulation program description     ===
+# ==========================================
+simulation:
+  name: sim
+  body:
+    - print_logo_banner
+    - hw_device_init   # provides MPI_COMM_WORLD as a default communicator
+    - init_prolog
+    - input_data
+    - init_epilog
+    - first_iteration
+    - compute_loop
+    - simulation_epilog
+    - hw_device_finalize
