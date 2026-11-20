@@ -30,9 +30,13 @@ and deploys it to GitHub Pages.
 
 ## Configuration files and example decks
 
-`docs/files/` holds copies of exaMPM's `data/config/*.msp` and `example/*.msp`, included in the pages with
-`--8<-- "docs/files/<file>"`. After a change in exaMPM, refresh them with:
+`docs/files/` holds copies of exaMPM's `data/config/*.msp` and `example/<name>/<name>.msp`, included in the pages
+with `--8<-- "docs/files/<file>"`, and `docs/images/examples/` the example pictures `example/<name>/<name>.png`.
+After a change in exaMPM, refresh them with:
 
 ```bash
 scripts/sync_files.sh /path/to/exaMPM
 ```
+
+The pictures are rendered with `pvbatch scripts/render_example.py` (see the page *User Guide > Outputs >
+Visualization*).

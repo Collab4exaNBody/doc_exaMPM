@@ -4,6 +4,11 @@ icon: material/numeric-4-circle
 
 # Slope with two layers
 
+<figure markdown="span">
+  ![slope_two_layers](../images/examples/slope_two_layers.png){ width="800" }
+  <figcaption>t = 0.27 s, with the synthetic Blender files of the repository; group 0 (elastic) in beige, weak layer (group 1) in red</figcaption>
+</figure>
+
 An elastic slope with a weaker Mohr-Coulomb layer, in a box of 5 planes. Port of mpmxdem's `slopeTwoLayers.sim`.
 
 ## Deck
@@ -23,9 +28,23 @@ An elastic slope with a weaker Mohr-Coulomb layer, in a box of 5 planes. Port of
 ## Input files
 
 `coordMP.txt`, `modifyMP.txt` and `coordPlanes0..4.txt`, read from the run directory. Synthetic files are provided in
-`example/blender/` (the layer is a 6 × 6 × 1.5 m block crossing the slope).
+`example/slope_two_layers/` (the layer is a 6 × 6 × 1.5 m block crossing the slope).
+
+## Run
+
+The folder `example/slope_two_layers/` holds the deck, the synthetic `coordMP.txt`, `modifyMP.txt` and `coordPlanes0..4.txt`, and its picture. In the build tree:
+
+```bash linenums="1"
+cd build-exampm/example/slope_two_layers
+../exaMPM slope_two_layers.msp --omp_num_threads 8      # full run
+../exaMPM slope_two_layers.msp --set-global-simulation_end_iteration 19 --set-global-mpm_log_period 10   # short run (ctest)
+```
+
+To run the original example, replace the synthetic files of the run folder by the Blender files of the original.
+
+Open `mpm_paraview/mpm_*.pvtp` (material points) and `mpm_paraview/obstacles_*.vtk` (obstacles) in ParaView.
 
 ## Validation
 
-With the files of `example/blender/`, exaMPM and mpmxdem create the same 36864 material points (8880 of them are
+With the files of `example/slope_two_layers/`, exaMPM and mpmxdem create the same 36864 material points (8880 of them are
 moved to the layer); their positions after 2000 steps differ by less than $6 \times 10^{-6}$ m.

@@ -59,7 +59,7 @@ simulation_epilog: nop
 # ==========================================
 # === MPM building blocks                ===
 # ==========================================
-# Used by MPM decks, e.g. example/sphere_impacting_structure.msp:
+# Used by MPM decks, e.g. example/sphere_impacting_structure/sphere_impacting_structure.msp:
 #   init_epilog: mpm_init
 #   compute_loop: mpm_compute_loop
 #   mpm_constitutive_model: [ mohr_coulomb: {...} ]

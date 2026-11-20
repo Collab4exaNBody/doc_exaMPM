@@ -3003,15 +3003,18 @@
 
 <h1 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">&para;</a></h1>
 <p>Every example deck is a test, registered in <code>example/CMakeLists.txt</code>:</p>
-<div class="language-cmake highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">add_omp_mpi_test</span><span class="p">(</span><span class="s">empty</span><span class="w"> </span><span class="s">empty.msp</span><span class="p">)</span><span class="w">          </span><span class="c"># 1 thread, 2 threads (_omp), mpirun -n 2 (_mpi)</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">add_omp_test</span><span class="p">(</span><span class="s">config_a1</span><span class="w"> </span><span class="s">config_a1.msp</span><span class="w">       </span><span class="c"># 1 thread, 2 threads (_omp); extra arguments are passed to exaMPM</span>
+<div class="language-cmake highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">add_omp_mpi_test</span><span class="p">(</span><span class="s">empty</span><span class="p">)</span><span class="w">        </span><span class="c"># 1 thread, 2 threads (_omp), mpirun -n 2 (_mpi)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">add_omp_test</span><span class="p">(</span><span class="s">config_a1</span><span class="w">         </span><span class="c"># 1 thread, 2 threads (_omp); extra arguments are passed to exaMPM</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">             </span><span class="s">--set-global-simulation_end_iteration</span><span class="w"> </span><span class="s">99</span><span class="w"> </span><span class="s">--set-global-mpm_vtk_period</span><span class="w"> </span><span class="s">50</span><span class="p">)</span>
 </span></code></pre></div>
 <p>MPM decks use <code>add_omp_test</code> (no MPI support yet) with a reduced number of steps, so that the whole suite runs in about a
-minute. The Blender decks run in a copy of <code>example/blender/</code> in the build tree (their working
-directory), so that their outputs stay out of the sources.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ctest<span class="w"> </span>--test-dir<span class="w"> </span>build-exampm<span class="w"> </span>--output-on-failure
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ctest<span class="w"> </span>--test-dir<span class="w"> </span>build-exampm<span class="w"> </span>-R<span class="w"> </span>Example_ExaMPM_config_a1
+minute. Each example is a folder <code>example/&lt;name&gt;/</code> holding <code>&lt;name&gt;.msp</code> and the files it reads.
+It is copied to <code>&lt;build&gt;/example/&lt;name&gt;/</code> and its tests run there, so that their outputs stay out of the sources.
+<code>&lt;build&gt;/example/exaMPM</code> is a link to the exaMPM wrapper, so every example runs the same way:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>build-exampm/example/piles_one<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>../exaMPM<span class="w"> </span>piles_one.msp
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ctest<span class="w"> </span>--test-dir<span class="w"> </span>build-exampm<span class="w"> </span>--output-on-failure
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ctest<span class="w"> </span>--test-dir<span class="w"> </span>build-exampm<span class="w"> </span>-R<span class="w"> </span>Example_ExaMPM_config_a1
 </span></code></pre></div>
 <h2 id="continuous-integration">Continuous integration<a class="headerlink" href="#continuous-integration" title="Permanent link">&para;</a></h2>
 <p><code>.github/workflows/install.yml</code> (Ubuntu 24.04, mpich), on every push and pull request:</p>
@@ -3019,7 +3022,7 @@ directory), so that their outputs stay out of the sources.</p>
 <li>builds onika and exaNBody from their <code>main</code> branches (cached by commit);</li>
 <li>builds and installs mpmxdem (branch <code>add_cmake</code>, without the 2D part);</li>
 <li>builds exaMPM, runs <code>ctest</code> and <code>cmake --install</code>;</li>
-<li>checks the installed files and runs the installed <code>exaMPM</code> on <code>example/empty.msp</code>.</li>
+<li>checks the installed files and runs the installed <code>exaMPM</code> on <code>example/empty/empty.msp</code>.</li>
 </ol>
 <h2 id="comparing-with-mpmxdem">Comparing with mpmxdem<a class="headerlink" href="#comparing-with-mpmxdem" title="Permanent link">&para;</a></h2>
 <p>The CMake target of mpmxdem gives the path of its <code>mpmbox3D</code> solver (<code>MPMXDEM_MPMBOX3D</code>). To compare a port:</p>

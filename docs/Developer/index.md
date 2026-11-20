@@ -19,7 +19,7 @@ exaMPM/
 │   ├── driver/             #   exaMPMDriver: obstacles and their motion, obstacle outputs
 │   └── interaction/        #   exaMPMInteraction: contact laws and forces
 ├── data/config/            # main-config.msp, config_globals.msp
-└── example/                # example decks (tests) and synthetic Blender files
+└── example/                # one folder per example: deck + files it reads (tests)
 ```
 
 - [**Adding an operator**](new_operator.md) — file, slots, registration, YAML wiring

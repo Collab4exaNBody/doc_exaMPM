@@ -7,14 +7,19 @@ icon: material/test-tube
 Every example deck is a test, registered in `example/CMakeLists.txt`:
 
 ```cmake
-add_omp_mpi_test(empty empty.msp)          # 1 thread, 2 threads (_omp), mpirun -n 2 (_mpi)
-add_omp_test(config_a1 config_a1.msp       # 1 thread, 2 threads (_omp); extra arguments are passed to exaMPM
+add_omp_mpi_test(empty)        # 1 thread, 2 threads (_omp), mpirun -n 2 (_mpi)
+add_omp_test(config_a1         # 1 thread, 2 threads (_omp); extra arguments are passed to exaMPM
              --set-global-simulation_end_iteration 99 --set-global-mpm_vtk_period 50)
 ```
 
 MPM decks use `add_omp_test` (no MPI support yet) with a reduced number of steps, so that the whole suite runs in about a
-minute. The Blender decks run in a copy of `example/blender/` in the build tree (their working
-directory), so that their outputs stay out of the sources.
+minute. Each example is a folder `example/<name>/` holding `<name>.msp` and the files it reads.
+It is copied to `<build>/example/<name>/` and its tests run there, so that their outputs stay out of the sources.
+`<build>/example/exaMPM` is a link to the exaMPM wrapper, so every example runs the same way:
+
+```bash
+cd build-exampm/example/piles_one && ../exaMPM piles_one.msp
+```
 
 ```bash
 ctest --test-dir build-exampm --output-on-failure
@@ -28,7 +33,7 @@ ctest --test-dir build-exampm -R Example_ExaMPM_config_a1
 1. builds onika and exaNBody from their `main` branches (cached by commit);
 2. builds and installs mpmxdem (branch `add_cmake`, without the 2D part);
 3. builds exaMPM, runs `ctest` and `cmake --install`;
-4. checks the installed files and runs the installed `exaMPM` on `example/empty.msp`.
+4. checks the installed files and runs the installed `exaMPM` on `example/empty/empty.msp`.
 
 ## Comparing with mpmxdem
 

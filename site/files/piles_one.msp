@@ -1,6 +1,6 @@
 # mpmxdem mpm/3D/Examples/piles_one.sim: a fixed pile (Cylinder) through a Mohr-Coulomb slope in a box. SI units.
-# Needs the Blender files of the original example in the run directory (not in mpmxdem; small synthetic ones in
-# example/blender are used by the tests):
+# Reads the Blender files of the original example from the run directory (not in mpmxdem). This folder holds
+# small synthetic ones, used by the tests:
 # slope.stl (slope) and coordPlanes0..4.txt (box).
 
 configuration:

@@ -2,7 +2,7 @@
 # simulation block, which only prints the banner and initializes /
 # finalizes the hardware (MPI, GPU). No particles, no grid, no time loop.
 #
-# Usage: ./exaMPM example/empty.msp
+# Usage: cd example/empty && ../exaMPM empty.msp   (from the build tree)
 
 compute_loop:
   - message: "exaMPM: empty run, nothing to compute"

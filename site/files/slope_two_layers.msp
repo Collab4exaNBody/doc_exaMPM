@@ -1,6 +1,6 @@
 # mpmxdem mpm/3D/Examples/slopeTwoLayers.sim: an elastic slope with a weaker Mohr-Coulomb layer, in a box. SI units.
-# Needs the Blender files of the original example in the run directory (not in mpmxdem; small synthetic ones in
-# example/blender are used by the tests):
+# Reads the Blender files of the original example from the run directory (not in mpmxdem). This folder holds
+# small synthetic ones, used by the tests:
 # coordMP.txt (slope), modifyMP.txt (layer) and coordPlanes0..4.txt (box).
 # mpmxdem changes the model of the layer MPs but keeps their group (0); in exaMPM the model is chosen by group, so the
 # layer is group 1, with the same contact laws as group 0.

@@ -1,6 +1,6 @@
 # mpmxdem mpm/3D/Examples/sphereOnSlope.sim: a free sphere on a Mohr-Coulomb slope standing in a box. SI units.
-# Needs the Blender files of the original example in the run directory (not in mpmxdem; small synthetic ones in
-# example/blender are used by the tests):
+# Reads the Blender files of the original example from the run directory (not in mpmxdem). This folder holds
+# small synthetic ones, used by the tests:
 # coordMP.txt (slope), coordPlanes0..4.txt (box) and coordSpheres.txt (sphere).
 
 configuration:

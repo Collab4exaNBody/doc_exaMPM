@@ -2384,6 +2384,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#example-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Example images
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#blender" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -2988,6 +2999,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#example-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Example images
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#blender" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -3023,10 +3045,92 @@
 <p>The output files are made for <a href="https://www.paraview.org/">ParaView</a> (<code>sudo apt install paraview</code>):</p>
 <ol>
 <li><em>File &gt; Open</em> <code>mpm_paraview/mpm_..pvtp</code> (the time series is grouped) and <code>mpm_paraview/obstacles_..vtk</code>;</li>
-<li>color the material points by <code>type</code>, <code>vx</code>, or a component of <code>mp_stress</code>;</li>
+<li>color the material points by <code>type</code>, <code>mp_mass</code>, <code>mp_vol</code>, or a component of <code>mp_stress</code> / <code>mp_strain</code> (the
+   only fields written);</li>
 <li>to see the material points as cubes, apply a <em>Glyph</em> filter (<em>Box</em>, scale <code>mp_vol</code>^(1/3)) or render the
    points as <em>Point Gaussian</em>.</li>
 </ol>
+<h2 id="example-images">Example images<a class="headerlink" href="#example-images" title="Permanent link">&para;</a></h2>
+<p>The pictures of the <a href="../../Tutorials/index.html">tutorials</a> are rendered off screen with <code>pvbatch</code> (ParaView) and the
+script <code>scripts/render_example.py</code> of this documentation repository:</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>pvbatch<span class="w"> </span>scripts/render_example.py<span class="w"> </span>&lt;run<span class="w"> </span>dir&gt;<span class="w"> </span>&lt;step&gt;<span class="w"> </span>&lt;out.png&gt;<span class="w"> </span>&lt;MP<span class="w"> </span>radius&gt;<span class="w"> </span>&lt;color&gt;<span class="w"> </span><span class="o">[</span>azimuth<span class="w"> </span>elevation<span class="w"> </span>zoom<span class="w"> </span>pad<span class="o">]</span>
+</span></code></pre></div></td></tr></table></div>
+<ul>
+<li><code>&lt;run dir&gt;</code> holds the <code>mpm_paraview/</code> folder of a run, <code>&lt;step&gt;</code> is a step with an output (a multiple of
+  <code>mpm_vtk_period</code>). The script stops with the list of available steps when the file does not exist.</li>
+<li><code>&lt;MP radius&gt;</code>: half the <code>size</code> of the material points of the deck.</li>
+<li><code>&lt;color&gt;</code>: <code>pressure</code> (mean stress <span class="arithmatex">\(-\operatorname{tr}\sigma/3\)</span>, scale clipped at the 98th percentile), <code>height</code> (y)
+  or <code>type</code> (group 0 beige, group 1 red).</li>
+<li>The camera looks at the material points (bounds enlarged by <code>pad</code> metres), turned by <code>azimuth</code> and <code>elevation</code>
+  degrees; obstacles are drawn semi-transparent.</li>
+</ul>
+<p>The tutorial pictures come from longer runs than the tests, in the build tree:</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>build-exampm/example/piles_one
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>../exaMPM<span class="w"> </span>piles_one.msp<span class="w"> </span>--omp_num_threads<span class="w"> </span><span class="m">4</span><span class="w"> </span>--set-global-simulation_end_iteration<span class="w"> </span><span class="m">29999</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">          </span>--set-global-mpm_vtk_period<span class="w"> </span><span class="m">3000</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a>pvbatch<span class="w"> </span><span class="si">${</span><span class="nv">DOC_EXAMPM_DIR</span><span class="si">}</span>/scripts/render_example.py<span class="w"> </span>.<span class="w"> </span><span class="m">27000</span><span class="w"> </span>piles_one.png<span class="w"> </span><span class="m">0</span>.07<span class="w"> </span>height<span class="w"> </span><span class="m">35</span><span class="w"> </span><span class="m">25</span><span class="w"> </span><span class="m">1</span>.0<span class="w"> </span><span class="m">0</span>.3
+</span></code></pre></div></td></tr></table></div>
+<div class="center-table">
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Example</th>
+<th style="text-align: right;">Steps run</th>
+<th style="text-align: right;">Rendered step</th>
+<th style="text-align: right;">MP radius</th>
+<th style="text-align: left;">Color</th>
+<th style="text-align: left;">Camera (az el zoom pad)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>sphere_impacting_structure</code></td>
+<td style="text-align: right;">30000</td>
+<td style="text-align: right;">24000</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: left;"><code>pressure</code></td>
+<td style="text-align: left;">35 25 1.0 0.5</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>config_a1</code></td>
+<td style="text-align: right;">10000 (full)</td>
+<td style="text-align: right;">9000</td>
+<td style="text-align: right;">0.006</td>
+<td style="text-align: left;"><code>pressure</code></td>
+<td style="text-align: left;">0 12 1.0 0.3</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sphere_on_slope</code></td>
+<td style="text-align: right;">30000</td>
+<td style="text-align: right;">27000</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: left;"><code>height</code></td>
+<td style="text-align: left;">35 25 1.0 0.3</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>slope_two_layers</code></td>
+<td style="text-align: right;">30000</td>
+<td style="text-align: right;">27000</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: left;"><code>type</code></td>
+<td style="text-align: left;">35 25 1.0 0.3</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>piles_one</code></td>
+<td style="text-align: right;">30000</td>
+<td style="text-align: right;">27000</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: left;"><code>height</code></td>
+<td style="text-align: left;">35 25 1.0 0.3</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The images are stored as 1200 × 750 PNG in <code>example/&lt;name&gt;/&lt;name&gt;.png</code> (exaMPM) and <code>docs/images/examples/</code>
+(this site).</p>
 <h2 id="blender">Blender<a class="headerlink" href="#blender" title="Permanent link">&para;</a></h2>
 <p>Blender cannot read VTK files directly. Two ways to render a simulation in Blender:</p>
 <ul>

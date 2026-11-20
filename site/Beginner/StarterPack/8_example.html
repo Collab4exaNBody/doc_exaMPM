@@ -2914,7 +2914,7 @@
 
 
 <h1 id="working-example">Working Example<a class="headerlink" href="#working-example" title="Permanent link">&para;</a></h1>
-<p>The complete deck gathers all the blocks of the previous pages. It is <code>example/sphere_impacting_structure.msp</code>, the
+<p>The complete deck gathers all the blocks of the previous pages. It is <code>example/sphere_impacting_structure/sphere_impacting_structure.msp</code>, the
 port of mpmxdem's <code>sphereImpactingStructure.sim</code>: a rigid sphere hits a Mohr-Coulomb block lying on a plane.</p>
 <div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
@@ -2988,12 +2988,14 @@ port of mpmxdem's <code>sphereImpactingStructure.sim</code>: a rigid sphere hits
 </span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="nt">mpm_constitutive_model</span><span class="p">:</span>
 </span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mohr_coulomb</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> group</span><span class="p">:</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="nt"> young</span><span class="p">:</span><span class="w"> </span><span class="nv">8.0e6</span><span class="p p-Indicator">,</span><span class="nt"> poisson</span><span class="p">:</span><span class="w"> </span><span class="nv">0.42</span><span class="p p-Indicator">,</span><span class="nt"> friction_angle</span><span class="p">:</span><span class="w"> </span><span class="nv">0.7</span><span class="p p-Indicator">,</span><span class="nt"> cohesion</span><span class="p">:</span><span class="w"> </span><span class="nv">1e4</span><span class="p p-Indicator">,</span><span class="nt"> dilatancy_angle</span><span class="p">:</span><span class="w"> </span><span class="nv">0.05</span><span class="w"> </span><span class="p p-Indicator">}</span>
 </span></code></pre></div></td></tr></table></div>
-<p>Run it with:</p>
+<p>Run it in its folder of the build tree (see <a href="../../Tutorials/index.html#running-an-example">Running an example</a>):</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>exaMPM<span class="w"> </span>sphere_impacting_structure.msp<span class="w"> </span>--omp_num_threads<span class="w"> </span><span class="m">8</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="c1"># or a short test run</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a>exaMPM<span class="w"> </span>sphere_impacting_structure.msp<span class="w"> </span>--set-global-simulation_end_iteration<span class="w"> </span><span class="m">199</span><span class="w"> </span>--set-global-mpm_vtk_period<span class="w"> </span><span class="m">100</span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>build-exampm/example/sphere_impacting_structure
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>../exaMPM<span class="w"> </span>sphere_impacting_structure.msp<span class="w"> </span>--omp_num_threads<span class="w"> </span><span class="m">8</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="c1"># or a short test run</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a>../exaMPM<span class="w"> </span>sphere_impacting_structure.msp<span class="w"> </span>--set-global-simulation_end_iteration<span class="w"> </span><span class="m">199</span><span class="w"> </span>--set-global-mpm_vtk_period<span class="w"> </span><span class="m">100</span>
 </span></code></pre></div></td></tr></table></div>
 <p>Then open <code>mpm_paraview/mpm_*.pvtp</code> and <code>mpm_paraview/obstacles_*.vtk</code> in ParaView. The
 <a href="../../Tutorials/sphere_impacting_structure.html">tutorial</a> discusses the results.</p>

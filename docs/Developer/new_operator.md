@@ -80,5 +80,5 @@ batch:
 
 ## 5. Test and document it
 
-Check `exaMPM --help my_operator`, add a deck to `example/` and a test to `example/CMakeLists.txt` (see
+Check `exaMPM --help my_operator`, add an example folder `example/<name>/` (deck `<name>.msp` and the files it reads) and a test to `example/CMakeLists.txt` (see
 [Tests](tests.md)), and document the operator in this site.

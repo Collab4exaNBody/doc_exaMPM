@@ -79,4 +79,4 @@ ball 0.4 6.5 3 4
 !!! note "Generating the files"
 
     In mpmxdem, these files are produced by a Blender Python script (`getCoord`) that is not distributed with
-    mpmxdem. The repository `example/blender/` of exaMPM contains small hand-written files used by the tests.
+    mpmxdem. The example folders of exaMPM (`example/<name>/`) contain small hand-written files used by the tests.
